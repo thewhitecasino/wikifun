@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Index</title>
+    <style>
+      @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap');
+      body{
+        font-family: "Roboto",serif;
+      }
+      .div-card{
+        border: 1px solid gray;
+        border-radius: 15px;
+        min-width: 350px;
+        min-height: 500px;
+        width: 300px;
+        height: 500px;
+        max-width: 1000px;
+        position: absolute;
+        margin: auto;
+        top: 0;
+        right: 0;
+        bottom: 0;
+        left: 0;
+        padding: 20px;
+      }
+    </style>
+</head>
+<body>
+  <div class="div-card">
+    <h1 id="title">Welcome</h1>
+    <hr>
+    <p style="height: 400px; overflow-y: auto" id="content">Welcome to WikiFun.</p>
+      <br>
+      <a href="" id="search-g" target="_blank">Search On Google</a>
+      <p id="interest"></p>
+  </div>
+  <button onclick="call_article()" style="color: white; background: gray; border: none; border-radius: 15px; font-size: 1.5rem; padding: 10px; position: absolute; right: 10px">Next Article</button>
+  <script>
+      function call_article(){
+          document.getElementById("title").innerText = "Loading";
+          document.getElementById("content").innerText = "We are trying to load your next article.";
+          document.getElementById("interest").innerText = "Please Wait"
+          fetch("/get-article")
+          .then(function(response) {
+            return response.json();
+          })
+          .then(function(jsonResponse) {
+              clearTimeout(window.count_interest_int);
+            document.getElementById("title").innerText = jsonResponse.title;
+            document.getElementById("content").innerText = jsonResponse.content;
+            document.getElementById("interest").innerText = "You are seeing this because you expressed interest in: " + jsonResponse.interest_choice;
+            document.getElementById("search-g").href = "https://google.com/search?query=" + jsonResponse.title;
+            window.interest_choice = jsonResponse.interest_choice;
+            window.count_interest_int = setTimeout(count_interest, 7000);
+          });
+      }
+      function count_interest(){
+        fetch("/express_interest/" + window.interest_choice)
+          .then(function(response) {
+            return response.json();
+          })
+          .then(function(jsonResponse) {
+
+          });
+      }
+  </script>
+</body>
+</html>
